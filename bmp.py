@@ -135,55 +135,10 @@ class BMP:
     def flip_vertical(self):
         self.bitmap.reverse()
 
-    def blur_normal(self):
+    def blur(self):
         copy = self.bitmap[::]
 
-        for y in xrange(0, self.height):
-            for x in xrange(0, self.width):
-                total = copy[y][x]
-                cont = 1
-
-                if y != 0:
-                    r, g, b = copy[y-1][x]
-                    total = total[0]+r, total[1]+g, total[2]+b
-                    cont += 1
-
-                if y != self.height-1:
-                    r, g, b = copy[y+1][x]
-                    total = total[0]+r, total[1]+g, total[2]+b
-                    cont += 1
-
-                if x != 0:
-                    r, g, b = copy[y][x-1]
-                    total = total[0]+r, total[1]+g, total[2]+b
-                    cont += 1
-
-                if x != self.width-1:
-                    r, g, b = copy[y][x+1]
-                    total = total[0]+r, total[1]+g, total[2]+b
-                    cont += 1
-
-                if x != 0 and y != 0:
-                    r, g, b = copy[y-1][x-1]
-                    total = total[0]+r, total[1]+g, total[2]+b
-                    cont += 1
-               
-                if x != self.width-1 and y != self.height-1:
-                    r, g, b = copy[y+1][x+1]
-                    total = total[0]+r, total[1]+g, total[2]+b
-                    cont += 1
-
-                if x != 0 and y != self.height-1:
-                    r, g, b = copy[y+1][x-1]
-                    total = total[0]+r, total[1]+g, total[2]+b
-                    cont += 1
-
-                if x != self.width-1 and y != 0:
-                    r, g, b = copy[y-1][x+1]
-                    total = total[0]+r, total[1]+g, total[2]+b
-                    cont += 1
-
-                self.bitmap[y][x] = total[0]/cont, total[1]/cont, total[2]/cont
+        self.blur_box(1, 1)
 
     def blur_box(self, box_width, box_height):
         copy = self.bitmap[::]
@@ -209,7 +164,7 @@ class BMP:
         return total
 
 if __name__ == "__main__":
-    bmp = BMP("test.bmp")
+    bmp = BMP("j0hn.bmp")
 
     pot = 205.1
     light = 0.8
@@ -226,5 +181,5 @@ if __name__ == "__main__":
             bmp.bitmap[y][x] = int(r*f), int(g*t), int(b*p)
     """
 
-    bmp.blur_box(4, 4)
+    bmp.blur()
     bmp.save_to("test.bmp")

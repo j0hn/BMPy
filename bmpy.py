@@ -213,35 +213,49 @@ class BMPy:
                 self.bitmap[y][x] = int(nr), int(ng), int(nb)
 
     def magic_wand(self, start_x, start_y, color, intensity):
-        self.mw_passed_pix = []
-        self.mw_org_color = self.bitmap[start_y][start_x]
-        self._magic_wand(start_x, start_y, color, intensity)
-        self.bitmap[start_y][start_x] = (255, 0, 0)
+        to_explore = []
+        explored = []
 
-
-    def _magic_wand(self, x, y, color, intensity):
-        #print "Voy por", x, y
-        #print self.mw_passed_pix
-        #raw_input("")
+        org_color = self.bitmap[start_y][start_x]
 
         bw = bh = 1
-        blimit1 = (max(0, x-bw), max(0, y-bh))
-        blimit2 = (min(self.width-1, x+bw), min(self.height-1, y+bh))
-
-        org_color = self.mw_org_color
+        blimit1 = (max(0, start_x-bw), max(0, start_y-bh))
+        blimit2 = (min(self.width-1, start_x+bw), min(self.height-1, start_y+bh))
 
         for y in xrange(blimit1[1], blimit2[1]+1):
             for x in xrange(blimit1[0], blimit2[0]+1):
-                if (x,y) not in self.mw_passed_pix:
-                    r, g, b = self.bitmap[y][x]
+                to_explore.append((x,y))
 
-                    if r in range(org_color[0]-intensity, org_color[0]+intensity) and \
-                       g in range(org_color[1]-intensity, org_color[1]+intensity) and \
-                       b in range(org_color[2]-intensity, org_color[2]+intensity):
-                       
-                        self.bitmap[y][x] = color
-                        self.mw_passed_pix.append((x,y))
-                        self._magic_wand(x, y, color, intensity)
+        
+        while len(to_explore) != 0:
+            x, y = to_explore.pop()
+
+            if (x,y) not in explored:
+                r, g, b = self.bitmap[y][x]
+
+                if r in range(org_color[0]-intensity, org_color[0]+intensity) and \
+                   g in range(org_color[1]-intensity, org_color[1]+intensity) and \
+                   b in range(org_color[2]-intensity, org_color[2]+intensity):
+                   
+                    self.bitmap[y][x] = color
+                    explored.append((x,y))
+
+                    around = self.around(x, y)
+                    around = [x for x in around if x not in explored]
+
+                    map(to_explore.append, around)
+
+    def around(self, x, y):
+        result = []
+
+        blimit1 = (max(0, x-1), max(0, y-1))
+        blimit2 = (min(self.width-1, x+1), min(self.height-1, y+1))
+
+        for y in xrange(blimit1[1], blimit2[1]+1):
+            for x in xrange(blimit1[0], blimit2[0]+1):
+                result.append((x,y))
+
+        return result
 
 
 if __name__ == "__main__":
@@ -259,7 +273,7 @@ if __name__ == "__main__":
         print "Error:", e
         sys.exit(1)
 
-    '''
+    """
     # Crazy test
     pot = 205.1
     light = 0.8
@@ -275,5 +289,6 @@ if __name__ == "__main__":
             bmp.bitmap[y][x] = int(r*f), int(g*t), int(b*p)
     """
 
-    bmp.magic_wand(70, 130, (0, 0, 0), 3)
+    bmp.magic_wand(50, 130, (0, 0, 0), 5)
     bmp.save_to("test.bmp")
+

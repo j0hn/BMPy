@@ -116,9 +116,10 @@ class BMPy:
             slope = (y2-y1)/float(x2-x1)
         else:
             slope = 0
+
         yintercept = y1 - slope*x1
 
-        for x in xrange(x1, x2-x1):
+        for x in xrange(x1, x1+(x2-x1)+1):
             ry = int(slope*x + yintercept)
             self.bitmap[ry][x] = color
 

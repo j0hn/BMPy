@@ -36,17 +36,17 @@ class BMPy:
         rowstride = ceil(width_bytes/4.0)*4
         padding = int(rowstride - width_bytes)
 
-        for h in xrange(self.height):
+        for y in xrange(self.height):
             self.bitmap.append([])
             
-            for w in xrange(self.width):
+            for x in xrange(self.width):
                 b = ord(self.raw_data[off])
                 g = ord(self.raw_data[off+1])
                 r = ord(self.raw_data[off+2])
 
                 off = off+3
 
-                self.bitmap[h].append((r,g,b))
+                self.bitmap[y].append((r,g,b))
 
             off += padding
 
@@ -64,9 +64,9 @@ class BMPy:
 
         raw_copy.write(self.raw_data[:self.data_offset])
 
-        for h in xrange(self.height):
-            for w in xrange(self.width):
-                r, g, b = bitmap[h][w]
+        for y in xrange(self.height):
+            for x in xrange(self.width):
+                r, g, b = bitmap[y][x]
 
                 # Out of range control
                 if r > 255: r = 255
@@ -188,6 +188,31 @@ class BMPy:
 
         return total
 
+    def desaturate(self):
+        '''In other words, convert the image to gray scale'''
+
+        for y in xrange(self.height):
+            for x in xrange(self.width):
+                r, g, b = self.bitmap[y][x]
+
+                average = (r+g+b)/3
+
+                self.bitmap[y][x] = average, average, average
+
+    def sepia(self):
+        '''Transform the image colors to a sepia scale'''
+
+        for y in xrange(self.height):
+            for x in xrange(self.width):
+                r, g, b = self.bitmap[y][x]
+
+                nr = r*0.393 + g*0.769 + b*0.189
+                ng = r*0.349 + g*0.686 + b*0.168
+                nb = r*0.272 + g*0.534 + b*0.131 
+
+                self.bitmap[y][x] = int(nr), int(ng), int(nb)
+
+
 if __name__ == "__main__":
     if len(sys.argv) > 1:
         image_name = sys.argv[1]
@@ -218,5 +243,5 @@ if __name__ == "__main__":
             bmp.bitmap[y][x] = int(r*f), int(g*t), int(b*p)
     """
 
-    bmp.blur()
+    bmp.sepia()
     bmp.save_to("test.bmp")

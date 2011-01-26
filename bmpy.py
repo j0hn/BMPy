@@ -1,12 +1,11 @@
 #!/usr/bin/env python
+'''Small library to open and edit bmp files'''
 
 import sys
 import struct
 import StringIO
 from math import ceil
 from random import randint
-
-INVFILE = 1
 
 class BMPy:
     def __init__(self, filename):

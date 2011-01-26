@@ -212,6 +212,37 @@ class BMPy:
 
                 self.bitmap[y][x] = int(nr), int(ng), int(nb)
 
+    def magic_wand(self, start_x, start_y, color, intensity):
+        self.mw_passed_pix = []
+        self.mw_org_color = self.bitmap[start_y][start_x]
+        self._magic_wand(start_x, start_y, color, intensity)
+        self.bitmap[start_y][start_x] = (255, 0, 0)
+
+
+    def _magic_wand(self, x, y, color, intensity):
+        #print "Voy por", x, y
+        #print self.mw_passed_pix
+        #raw_input("")
+
+        bw = bh = 1
+        blimit1 = (max(0, x-bw), max(0, y-bh))
+        blimit2 = (min(self.width-1, x+bw), min(self.height-1, y+bh))
+
+        org_color = self.mw_org_color
+
+        for y in xrange(blimit1[1], blimit2[1]+1):
+            for x in xrange(blimit1[0], blimit2[0]+1):
+                if (x,y) not in self.mw_passed_pix:
+                    r, g, b = self.bitmap[y][x]
+
+                    if r in range(org_color[0]-intensity, org_color[0]+intensity) and \
+                       g in range(org_color[1]-intensity, org_color[1]+intensity) and \
+                       b in range(org_color[2]-intensity, org_color[2]+intensity):
+                       
+                        self.bitmap[y][x] = color
+                        self.mw_passed_pix.append((x,y))
+                        self._magic_wand(x, y, color, intensity)
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -228,10 +259,11 @@ if __name__ == "__main__":
         print "Error:", e
         sys.exit(1)
 
+    '''
+    # Crazy test
     pot = 205.1
     light = 0.8
 
-    """
     for y in xrange(0, bmp.height):
         for x in xrange(0, bmp.width):
             r, g, b = bmp.bitmap[y][x]
@@ -243,5 +275,5 @@ if __name__ == "__main__":
             bmp.bitmap[y][x] = int(r*f), int(g*t), int(b*p)
     """
 
-    bmp.sepia()
+    bmp.magic_wand(70, 130, (0, 0, 0), 3)
     bmp.save_to("test.bmp")

@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import sys
 import struct
 import StringIO
 from math import ceil
@@ -9,6 +10,7 @@ INVFILE = 1
 
 class BMPy:
     def __init__(self, filename):
+        '''Main class to open and edit a 24 bits bmp image'''
 
         f = open(filename)
         self.raw_data = f.read()
@@ -19,9 +21,16 @@ class BMPy:
         self.bpp = ord(self.raw_data[int(0x1C)]) # Bits Per Pixel
         self.bitmap = []
 
+        if self.raw_data[0] != "B" and self.raw_data[1] != "M":
+            raise TypeError, "Not a BMP file!"
+        if self.bpp != 24:
+            raise TypeError, "Not a 24 bits BMP file"
+
         self.create_bitmap()
 
     def create_bitmap(self):
+        '''Creates the bitmap from the raw_data'''
+
         off = self.data_offset
 
         width_bytes = self.width*(self.bpp/8)
@@ -45,6 +54,8 @@ class BMPy:
         self.bitmap = self.bitmap[::-1]
 
     def save_to(self, filename):
+        '''Export the bmp saving the changes done to the bitmap'''
+
         raw_copy = StringIO.StringIO()
         bitmap = self.bitmap[::-1]
         
@@ -100,6 +111,8 @@ class BMPy:
                 self.bitmap[y][x] = color
 
     def draw_line(self, color, x1, y1, x2, y2):
+        ''' Draw a line from (x1, y1) to (x2, y2)'''
+
         if x2-x1 != 0:
             slope = (y2-y1)/float(x2-x1)
         else:
@@ -111,6 +124,8 @@ class BMPy:
             self.bitmap[ry][x] = color
 
     def mosaic(self, mosaic_size):
+        '''Pixelate the image with block size of mosaic_size'''
+
         mid = mosaic_size/2
 
         for y in xrange(0, self.height, mosaic_size):
@@ -124,23 +139,34 @@ class BMPy:
                 self.draw_rect(color,x, y, ex, ey)
 
     def invert(self):
+        '''Invert the colors of the image'''
+
         for y in xrange(0, self.height):
             for x in xrange(0, self.width):
                 r,g,b = bmp.bitmap[y][x]
                 bmp.bitmap[y][x] = (255-r, 255-g, 255-b) 
 
     def flip_horizontal(self):
+        '''Flip the image horizontaly'''
+
         map(list.reverse, self.bitmap)
 
     def flip_vertical(self):
+        '''Flip the image verticaly'''
+
         self.bitmap.reverse()
 
     def blur(self):
+        '''Simple blur'''
+
         copy = self.bitmap[::]
 
         self.blur_box(1, 1)
 
-    def blur_box(self, box_width, box_height):
+    def box_blur(self, box_width, box_height):
+        '''More advance blur where you can specify a box
+        where the blur takes information from'''
+
         copy = self.bitmap[::]
 
         for y in xrange(0, self.height):
@@ -164,7 +190,19 @@ class BMPy:
         return total
 
 if __name__ == "__main__":
-    bmp = BMPy("j0hn.bmp")
+    if len(sys.argv) > 1:
+        image_name = sys.argv[1]
+    else:
+        print "Usage: " + sys.argv[0] + " FILE"
+        print
+        print "Note: it must be a 24-bit bmp file"
+        sys.exit(1)
+
+    try:
+        bmp = BMPy(image_name)
+    except Exception, e:
+        print "Error:", e
+        sys.exit(1)
 
     pot = 205.1
     light = 0.8

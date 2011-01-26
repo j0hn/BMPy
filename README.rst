@@ -1,4 +1,5 @@
-== BMPy ==
+BMPy
+====
 
 A really small python library for reading and
 apliying image effects to BMP (24 bits) images.

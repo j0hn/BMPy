@@ -7,7 +7,7 @@ from random import randint
 
 INVFILE = 1
 
-class BMP:
+class BMPy:
     def __init__(self, filename):
 
         f = open(filename)
@@ -164,7 +164,7 @@ class BMP:
         return total
 
 if __name__ == "__main__":
-    bmp = BMP("j0hn.bmp")
+    bmp = BMPy("j0hn.bmp")
 
     pot = 205.1
     light = 0.8

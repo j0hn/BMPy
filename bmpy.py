@@ -212,7 +212,10 @@ class BMPy:
 
                 self.bitmap[y][x] = int(nr), int(ng), int(nb)
 
-    def magic_wand(self, start_x, start_y, color, intensity):
+    def magic_wand(self, start_x, start_y, color, tolerance):
+        # kindda stolen from here:
+        # http://editor.pixastic.com/tools/selectwand.js
+
         to_explore = []
         explored = []
 
@@ -226,36 +229,38 @@ class BMPy:
             for x in xrange(blimit1[0], blimit2[0]+1):
                 to_explore.append((x,y))
 
+		neig = [(-1,0),
+               (1,0),
+               (0,-1),
+               (0,1),
+               (-1,-1),
+               (-1,1),
+               (1,-1),
+               (1,1)]
+
         
         while len(to_explore) != 0:
             x, y = to_explore.pop()
 
             if (x,y) not in explored:
-                r, g, b = self.bitmap[y][x]
+                explored.append((x,y))
 
-                if r in range(org_color[0]-intensity, org_color[0]+intensity) and \
-                   g in range(org_color[1]-intensity, org_color[1]+intensity) and \
-                   b in range(org_color[2]-intensity, org_color[2]+intensity):
-                   
-                    self.bitmap[y][x] = color
-                    explored.append((x,y))
+                for i in xrange(8):
+                    nx = x + neig[i][0]
+                    ny = y + neig[i][1]
 
-                    around = self.around(x, y)
-                    around = [x for x in around if x not in explored]
+                    if nx not in range(0, self.width) or ny not in range(0, self.height):
+                        continue
 
-                    map(to_explore.append, around)
+                    r, g, b = self.bitmap[ny][nx]
 
-    def around(self, x, y):
-        result = []
+                    dr = abs(org_color[0]-r)
+                    dg = abs(org_color[1]-g)
+                    db = abs(org_color[2]-b)
 
-        blimit1 = (max(0, x-1), max(0, y-1))
-        blimit2 = (min(self.width-1, x+1), min(self.height-1, y+1))
-
-        for y in xrange(blimit1[1], blimit2[1]+1):
-            for x in xrange(blimit1[0], blimit2[0]+1):
-                result.append((x,y))
-
-        return result
+                    if dr <= tolerance and dg <= tolerance and db <= tolerance:
+                        self.bitmap[ny][nx] = color
+                        to_explore.append((nx, ny))
 
 
 if __name__ == "__main__":
@@ -289,6 +294,6 @@ if __name__ == "__main__":
             bmp.bitmap[y][x] = int(r*f), int(g*t), int(b*p)
     """
 
-    bmp.magic_wand(50, 130, (0, 0, 0), 5)
+    bmp.magic_wand(50, 130, (150, 20, 170), 10)
     bmp.save_to("test.bmp")
 

@@ -38,7 +38,7 @@ class BMPy:
 
         for y in xrange(self.height):
             self.bitmap.append([])
-            
+
             for x in xrange(self.width):
                 b = ord(self.raw_data[off])
                 g = ord(self.raw_data[off+1])
@@ -57,7 +57,7 @@ class BMPy:
 
         raw_copy = StringIO.StringIO()
         bitmap = self.bitmap[::-1]
-        
+
         width_bytes = self.width*(self.bpp/8)
         rowstride = ceil(width_bytes/4.0)*4
         padding = int(rowstride - width_bytes)
@@ -130,8 +130,8 @@ class BMPy:
 
         for y in xrange(0, self.height, mosaic_size):
             for x in xrange(0, self.width, mosaic_size):
-                ex = min(x+mosaic_size, bmp.width)
-                ey = min(y+mosaic_size, bmp.height)
+                ex = min(x+mosaic_size, self.width)
+                ey = min(y+mosaic_size, self.height)
 
                 ypos = min(y+mid, self.height-1)
                 xpos = min(x+mid, self.width-1)
@@ -143,8 +143,8 @@ class BMPy:
 
         for y in xrange(0, self.height):
             for x in xrange(0, self.width):
-                r,g,b = bmp.bitmap[y][x]
-                bmp.bitmap[y][x] = (255-r, 255-g, 255-b) 
+                r,g,b = self.bitmap[y][x]
+                self.bitmap[y][x] = (255-r, 255-g, 255-b)
 
     def flip_horizontal(self):
         '''Flip the image horizontaly'''
@@ -161,23 +161,23 @@ class BMPy:
 
         copy = self.bitmap[::]
 
-        self.blur_box(1, 1)
+        self.box_blur(1, 1)
 
     def box_blur(self, box_width, box_height, fuzzy=False):
         '''More advance blur where you can specify a box
         where the blur takes information from
-        
+
         fuzzy effect makes a noizy blur distort'''
 
         copy = self.bitmap[::]
 
         for y in xrange(0, self.height):
             for x in xrange(0, self.width):
-                average = self._blur_box_average(x, y, box_width,
+                average = self._box_blur_average(x, y, box_width,
                                                  box_height, copy, fuzzy)
                 self.bitmap[y][x] = average
 
-    def _blur_box_average(self, x, y, bw, bh, copy, fuzzy=False):
+    def _box_blur_average(self, x, y, bw, bh, copy, fuzzy=False):
         blimit1 = (max(0, x-bw), max(0, y-bh))
         blimit2 = (min(self.width-1, x+bw), min(self.height-1, y+bh))
 
@@ -216,7 +216,7 @@ class BMPy:
 
                 nr = r*0.393 + g*0.769 + b*0.189
                 ng = r*0.349 + g*0.686 + b*0.168
-                nb = r*0.272 + g*0.534 + b*0.131 
+                nb = r*0.272 + g*0.534 + b*0.131
 
                 self.bitmap[y][x] = int(nr), int(ng), int(nb)
 
@@ -246,7 +246,7 @@ class BMPy:
                (1,-1),
                (1,1)]
 
-        
+
         while len(to_explore) != 0:
             x, y = to_explore.pop()
 

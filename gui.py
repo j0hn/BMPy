@@ -126,8 +126,8 @@ class MainWindow(QMainWindow):
 
     def on_open(self):
         this_file_path = os.path.abspath(__file__)
-        filename = QFileDialog.getOpenFileName(self, 'Open file', this_file_path)
 
+        filename = QFileDialog.getOpenFileName(self, 'Open file', this_file_path)
         if filename == "": return
 
         try:
@@ -136,10 +136,14 @@ class MainWindow(QMainWindow):
             self.tmpfilename = tempfile.mkstemp(suffix=".bmp")[1]
             self.update_image()
         except Exception, e:
-            QMessageBox.critical(self, "Load error", str(e), QMessageBox.Ok)
+            QMessageBox.critical(self, "Load error",
+                                 "Error: " + str(e), QMessageBox.Ok)
 
     def on_save(self):
-        print "save"
+        filename = QFileDialog.getSaveFileName(self, "Save file", self.filename)
+        if filename == "": return
+
+        self.bmpy.save_to(filename)
 
     def on_undo(self):
         #self.update_image()

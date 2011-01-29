@@ -142,10 +142,12 @@ class MainWindow(QMainWindow):
         print "save"
 
     def on_undo(self):
-        self.update_image()
+        #self.update_image()
+        print "undo"
 
     def on_redo(self):
-        self.update_edit_image()
+        #self.update_edit_image()
+        print "redo"
 
     def on_blur(self):
         self.bmpy.blur()
@@ -160,8 +162,15 @@ class MainWindow(QMainWindow):
         self.update_edit_image()
 
     def on_mosaic(self):
-        self.bmpy.mosaic(5)
-        self.update_edit_image()
+        text, ok = QInputDialog.getText(self, "Mosaic", "Enter the mosaic size:")
+
+        if ok:
+            try:
+                self.bmpy.mosaic(int(text))
+                self.update_edit_image()
+            except ValueError:
+                QMessageBox.critical(self, "Load error",
+                        "Invalid Mosaic size", QMessageBox.Ok)
 
     def on_invert(self):
         self.bmpy.invert()

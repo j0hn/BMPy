@@ -154,8 +154,23 @@ class MainWindow(QMainWindow):
         print "redo"
 
     def on_blur(self):
-        self.bmpy.blur()
-        self.update_edit_image()
+        text, ok = QInputDialog.getText(self, "Blur", "Enter blur box: width, height: ")
+
+        if ok:
+            try:
+                text = text.split(",")
+                width = int(text[0])
+                height = int(text[1])
+
+                self.bmpy.box_blur(width, height)
+                self.update_edit_image()
+            except ValueError:
+                QMessageBox.critical(self, "Blur error",
+                        "Invalid box blur format, use numbers!", QMessageBox.Ok)
+            except IndexError:
+                QMessageBox.critical(self, "Blur error",
+                        "Invalid blur format\n" + \
+                        "You have to insert width, height", QMessageBox.Ok)
 
     def on_fliph(self):
         self.bmpy.flip_horizontal()
@@ -173,7 +188,7 @@ class MainWindow(QMainWindow):
                 self.bmpy.mosaic(int(text))
                 self.update_edit_image()
             except ValueError:
-                QMessageBox.critical(self, "Load error",
+                QMessageBox.critical(self, "Mosaic error",
                         "Invalid Mosaic size", QMessageBox.Ok)
 
     def on_invert(self):

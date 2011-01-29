@@ -16,6 +16,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         QMainWindow.__init__(self)
 
+
         # Window settings
         self.setWindowTitle("Bmpy Editor")
         self.setWindowIcon(QIcon("images/logo.png"))
@@ -112,6 +113,14 @@ class MainWindow(QMainWindow):
         self.move((screen.width()-size.width())/2, \
                   (screen.height()-size.height())/2)
 
+    def errorDialog(self, title, message):
+        blureff = QGraphicsBlurEffect(self)
+        self.setGraphicsEffect(blureff)
+
+        QMessageBox.critical(self, title, message, QMessageBox.Ok)
+
+        self.setGraphicsEffect(None)
+
     def update_image(self):
         self.scene.clear()
         image = QPixmap(self.filename)
@@ -136,8 +145,7 @@ class MainWindow(QMainWindow):
             self.tmpfilename = tempfile.mkstemp(suffix=".bmp")[1]
             self.update_image()
         except Exception, e:
-            QMessageBox.critical(self, "Load error",
-                                 "Error: " + str(e), QMessageBox.Ok)
+            self.errorDialog("Load Error", "Error: " + str(e))
 
     def on_save(self):
         filename = QFileDialog.getSaveFileName(self, "Save file", self.filename)
@@ -165,12 +173,11 @@ class MainWindow(QMainWindow):
                 self.bmpy.box_blur(width, height)
                 self.update_edit_image()
             except ValueError:
-                QMessageBox.critical(self, "Blur error",
-                        "Invalid box blur format, use numbers!", QMessageBox.Ok)
+                self.errorDialog("Blur error",
+                        "Invalid box blur format, use numbers!")
             except IndexError:
-                QMessageBox.critical(self, "Blur error",
-                        "Invalid blur format\n" + \
-                        "You have to insert width, height", QMessageBox.Ok)
+                self.errorDialog("Blur error", "Invalid blur format\n" + \
+                        "You have to insert width, height")
 
     def on_fliph(self):
         self.bmpy.flip_horizontal()
@@ -188,8 +195,7 @@ class MainWindow(QMainWindow):
                 self.bmpy.mosaic(int(text))
                 self.update_edit_image()
             except ValueError:
-                QMessageBox.critical(self, "Mosaic error",
-                        "Invalid Mosaic size", QMessageBox.Ok)
+               self.errorDialog("Mosaic error", "Invalid Mosaic size")
 
     def on_invert(self):
         self.bmpy.invert()

@@ -62,7 +62,25 @@ class BMPy:
         rowstride = ceil(width_bytes/4.0)*4
         padding = int(rowstride - width_bytes)
 
-        raw_copy.write(self.raw_data[:self.data_offset])
+        raw_copy.write(self.raw_data[:int(0x12)])
+
+        _w = hex(self.width)[2:]
+        _w = (8-len(_w))*"0" + _w
+
+        raw_copy.write(chr(int(_w[6:], 16)))
+        raw_copy.write(chr(int(_w[4:6], 16)))
+        raw_copy.write(chr(int(_w[2:4], 16)))
+        raw_copy.write(chr(int(_w[:2], 16)))
+
+        _h = hex(self.height)[2:]
+        _h = (8-len(_h))*"0" + _h
+
+        raw_copy.write(chr(int(_h[6:], 16)))
+        raw_copy.write(chr(int(_h[4:6], 16)))
+        raw_copy.write(chr(int(_h[2:4], 16)))
+        raw_copy.write(chr(int(_h[:2], 16)))
+
+        raw_copy.write(self.raw_data[int(0x1A):self.data_offset])
 
         for y in xrange(self.height):
             for x in xrange(self.width):
@@ -237,7 +255,7 @@ class BMPy:
             for x in xrange(blimit1[0], blimit2[0]+1):
                 to_explore.append((x,y))
 
-		neig = [(-1,0),
+        neig = [(-1,0),
                (1,0),
                (0,-1),
                (0,1),
@@ -270,6 +288,40 @@ class BMPy:
                         self.bitmap[ny][nx] = color
                         to_explore.append((nx, ny))
 
+    def crop(self, start_x, start_y, end_x, end_y):
+        self.width = end_x - start_x
+        self.height = end_y - start_y
+
+        self.bitmap = self.bitmap[start_y:end_y]
+        for y in range(len(self.bitmap)):
+            self.bitmap[y] = self.bitmap[y][start_x:end_x]
+
+    def resize(self, new_width, new_height):
+        fh = self.height/float(new_height)
+        fw = self.width/float(new_width)
+
+        new_grid = []
+
+        ch = 0
+        for i in range(new_height):
+            new_grid.append([])
+
+            y = int(round(ch))
+
+            cw = 0
+            for j in range(new_width):
+                x = int(round(cw))
+
+                new_grid[i].append(self.bitmap[y][x])
+
+                cw += fw
+
+            ch += fh
+
+        self.bitmap = new_grid
+        self.height = new_height
+        self.width = new_width
+
 
 if __name__ == "__main__":
     if len(sys.argv) > 1:
@@ -280,11 +332,14 @@ if __name__ == "__main__":
         print "Note: it must be a 24-bit bmp file"
         sys.exit(1)
 
-    try:
-        bmp = BMPy(image_name)
-    except Exception, e:
-        print "Error:", e
-        sys.exit(1)
+    #try:
+    bmp = BMPy(image_name)
+    #bmp.box_blur(5, 5, fuzzy=True)
+    bmp.resize(80, 150)
+    bmp.save_to("test.bmp")
+    #except Exception, e:
+    #    print "Error:", e
+    #    sys.exit(1)
 
     """
     # Crazy test
@@ -301,8 +356,4 @@ if __name__ == "__main__":
 
             bmp.bitmap[y][x] = int(r*f), int(g*t), int(b*p)
     """
-
-    #bmp.magic_wand(50, 130, (150, 20, 170), 10)
-    bmp.box_blur(10, 10, True)
-    bmp.save_to("test.bmp")
 

@@ -228,7 +228,6 @@ class BMPy:
                 self.bitmap[y][x] = int(nr), int(ng), int(nb)
 
     def magic_wand(self, start_x, start_y, color, tolerance):
-        # kindda stolen from here:
         # http://editor.pixastic.com/tools/selectwand.js
 
         to_explore = []

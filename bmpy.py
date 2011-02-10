@@ -62,23 +62,12 @@ class BMPy:
         rowstride = ceil(width_bytes/4.0)*4
         padding = int(rowstride - width_bytes)
 
+        s = struct.Struct("<i")
         raw_copy.write(self.raw_data[:int(0x12)])
-
-        _w = hex(self.width)[2:]
-        _w = (8-len(_w))*"0" + _w
-
-        raw_copy.write(chr(int(_w[6:], 16)))
-        raw_copy.write(chr(int(_w[4:6], 16)))
-        raw_copy.write(chr(int(_w[2:4], 16)))
-        raw_copy.write(chr(int(_w[:2], 16)))
-
-        _h = hex(self.height)[2:]
-        _h = (8-len(_h))*"0" + _h
-
-        raw_copy.write(chr(int(_h[6:], 16)))
-        raw_copy.write(chr(int(_h[4:6], 16)))
-        raw_copy.write(chr(int(_h[2:4], 16)))
-        raw_copy.write(chr(int(_h[:2], 16)))
+        _w = s.pack(self.width)
+        _h = s.pack(self.height)
+        raw_copy.write(_w)
+        raw_copy.write(_h)
 
         raw_copy.write(self.raw_data[int(0x1A):self.data_offset])
 
@@ -296,7 +285,18 @@ class BMPy:
         for y in range(len(self.bitmap)):
             self.bitmap[y] = self.bitmap[y][start_x:end_x]
 
-    def resize(self, new_width, new_height):
+    def resize(self, new_width, new_height, method="simple"):
+
+        if new_width > self.width or new_height > self.height:
+            raise NotImplementedError, "Only resizing to make the image smaller"
+
+        try:
+            getattr(self, "resize_"+ method )(new_width, new_height)
+        except AttributeError:
+            print "Skiping resize " + method
+            print "Reason: No method called " + method
+
+    def resize_simple(self, new_width, new_height):
         fh = self.height/float(new_height)
         fw = self.width/float(new_width)
 
@@ -332,14 +332,14 @@ if __name__ == "__main__":
         print "Note: it must be a 24-bit bmp file"
         sys.exit(1)
 
-    #try:
-    bmp = BMPy(image_name)
-    #bmp.box_blur(5, 5, fuzzy=True)
-    bmp.resize(80, 150)
-    bmp.save_to("test.bmp")
-    #except Exception, e:
-    #    print "Error:", e
-    #    sys.exit(1)
+    try:
+        bmp = BMPy(image_name)
+        bmp.resize(180, 150, method="simple")
+        bmp.box_blur(5, 5, fuzzy=True)
+        bmp.save_to("test.bmp")
+    except Exception, e:
+        print "Error:", e
+        sys.exit(1)
 
     """
     # Crazy test

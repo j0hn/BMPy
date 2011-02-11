@@ -24,7 +24,7 @@ BPP_OFFSET = int(0x1C)
 class BMPy(Image, blur.Blur, box_blur.BoxBlur, mosaic.Mosaic,
            sepia.Sepia, invert.Invert, flip.Flip, desaturate.Desaturate,
            magic_wand.MagicWand, resize.Resize, crop.Crop,
-           detect_edges.DetectEdges):
+           convolution.ConvolutionMatrix, detect_edges.DetectEdges):
     '''
     Open, edit, and save a bmp file
     '''
@@ -109,9 +109,9 @@ class BMPy(Image, blur.Blur, box_blur.BoxBlur, mosaic.Mosaic,
                 if b < 0: b = 0
 
                 #Char transformation
-                r = chr(r)
-                g = chr(g)
-                b = chr(b)
+                r = chr(int(r))
+                g = chr(int(g))
+                b = chr(int(b))
 
                 raw_copy.write(b + g + r)
 
@@ -166,7 +166,8 @@ if __name__ == "__main__":
     #try:
     bmp = BMPy()
     bmp.load_from_file(image_name)
-    bmp.detect_edges()
+    #bmp.detect_edges()
+    bmp.blur()
     bmp.save_to("test.bmp")
     #except Exception, e:
         #print "Error:", e

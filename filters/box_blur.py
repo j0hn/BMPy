@@ -17,13 +17,19 @@ class BoxBlur:
 
         fuzzy effect makes a noizy blur distort'''
 
-        copy = self.bitmap[::]
+        # copy = self.bitmap[::]
 
-        for y in xrange(0, self.height):
-            for x in xrange(0, self.width):
-                average = self._box_blur_average(x, y, box_width,
-                                                 box_height, copy, fuzzy)
-                self.bitmap[y][x] = average
+        # for y in xrange(0, self.height):
+        #     for x in xrange(0, self.width):
+        #         average = self._box_blur_average(x, y, box_width,
+        #                                          box_height, copy, fuzzy)
+        #         self.bitmap[y][x] = average
+
+        conv_matrix = [[1/9.0, 1/9.0, 1/9.0],
+                       [1/9.0, 1/9.0, 1/9.0],
+                       [1/9.0, 1/9.0, 1/9.0]]
+
+        self.apply_convolution_matrix(conv_matrix)
 
     def _box_blur_average(self, x, y, bw, bh, copy, fuzzy=False):
         blimit1 = (max(0, x-bw), max(0, y-bh))

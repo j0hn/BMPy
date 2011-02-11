@@ -8,8 +8,8 @@ Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
 class DetectEdges:
-
     def detect_edges(self):
+        '''Highlights image edges'''
 
         conv_matrix = [[-1,  -1,  -1],
                        [-1,   8,  -1],
@@ -18,13 +18,9 @@ class DetectEdges:
         conv_matrix_height = 3
         conv_matrix_width = 3
 
-        new_bitmap = []
-        for y in xrange(self.height):
-            new_bitmap.append([])
-
-            for x in xrange(self.width):
-                new_bitmap[y].append((self.bitmap[y][0], self.bitmap[y][1], self.bitmap[y][2]))
-
+        new_bitmap = self.bitmap[:]
+        for y in range(len(self.bitmap)):
+            new_bitmap[y] = self.bitmap[y][:]
 
         for y in xrange(1, self.height-1):
             for x in xrange(1, self.width-1):

@@ -12,6 +12,7 @@ import StringIO
 from math import ceil
 import random
 
+from absImage import Image
 from filters import *
 
 WIDTH_OFFSET = int(0x12)
@@ -20,14 +21,15 @@ DATA_OFFSET = int(0x0a)
 BPP_OFFSET = int(0x1C)
 
 
-class BMPy(blur.Blur, box_blur.BoxBlur, mosaic.Mosaic,
+class BMPy(Image, blur.Blur, box_blur.BoxBlur, mosaic.Mosaic,
            sepia.Sepia, invert.Invert, flip.Flip, desaturate.Desaturate,
-           magic_wand.MagicWand, resize.Resize, crop.Crop):
+           magic_wand.MagicWand, resize.Resize, crop.Crop,
+           detect_edges.DetectEdges):
     '''
     Open, edit, and save a bmp file
     '''
 
-    def __init__(self, filename):
+    def load_from_file(self, filename):
         '''Main class to open and edit a 24 bits bmp image'''
 
         bmpfile = open(filename)
@@ -161,10 +163,11 @@ if __name__ == "__main__":
         print "Note: it must be a 24-bit bmp file"
         sys.exit(1)
 
-    try:
-        bmp = BMPy(image_name)
-        bmp.resize(150, 150)
-        bmp.save_to("test.bmp")
-    except Exception, e:
-        print "Error:", e
-        sys.exit(1)
+    #try:
+    bmp = BMPy()
+    bmp.load_from_file(image_name)
+    bmp.detect_edges()
+    bmp.save_to("test.bmp")
+    #except Exception, e:
+        #print "Error:", e
+        #sys.exit(1)

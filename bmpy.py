@@ -167,8 +167,7 @@ if __name__ == "__main__":
     #try:
     bmp = BMPy()
     bmp.load_from_file(image_name)
-    #bmp.detect_edges()
-    bmp.conv_random()
+    bmp.detect_edges()
     bmp.save_to("test.bmp")
     #except Exception, e:
         #print "Error:", e

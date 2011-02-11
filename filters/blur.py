@@ -7,6 +7,7 @@ Blur filter
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class Blur:
     def blur(self):
         '''Simple blur'''

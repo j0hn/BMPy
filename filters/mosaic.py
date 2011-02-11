@@ -7,6 +7,7 @@ Mosaic filter
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class Mosaic:
     def mosaic(self, mosaic_size):
         '''Pixelate the image with block size of mosaic_size'''

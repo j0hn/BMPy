@@ -7,6 +7,7 @@ Sepia filter
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class Sepia:
     def sepia(self):
         '''Transform the image colors to a sepia scale'''

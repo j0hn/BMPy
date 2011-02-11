@@ -7,6 +7,7 @@ Detect edges filter
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class DetectEdges:
     def detect_edges(self):
         '''Highlights image edges'''

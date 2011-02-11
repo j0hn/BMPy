@@ -8,6 +8,7 @@ a more simple way to make filters.
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class ConvolutionMatrix:
     def apply_convolution_matrix(self, conv_matrix):
         '''Apply a convolution matrix to the current bitmap'''

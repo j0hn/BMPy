@@ -7,6 +7,7 @@ Magic Wand filter
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class MagicWand:
     def magic_wand(self, start_x, start_y, color, tolerance):
         # http://editor.pixastic.com/tools/selectwand.js

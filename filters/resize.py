@@ -7,6 +7,7 @@ Resize filter
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class Resize:
     def resize(self, new_width, new_height, method="simple"):
 

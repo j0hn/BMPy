@@ -7,6 +7,7 @@ Crop filter
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class Crop:
     def crop(self, start_x, start_y, end_x, end_y):
         '''Crops the image to the rectangle formed by

@@ -7,6 +7,7 @@ Flip filter
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class Flip:
     def flip_horizontal(self):
         '''Flip the image horizontaly'''

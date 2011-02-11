@@ -9,6 +9,7 @@ Author: j0hn <j0hn.com.ar@gmail.com>
 
 from random import randint
 
+
 class ConvRandom:
     def conv_random(self):
         '''WHO KNOWS?!?!!11one'''

@@ -10,6 +10,7 @@ Author: j0hn <j0hn.com.ar@gmail.com>
 
 import random
 
+
 class BoxBlur:
     def box_blur(self, box_width, box_height, fuzzy=False):
         '''More advance blur where you can specify a box

@@ -7,6 +7,7 @@ Invert filter
 Author: j0hn <j0hn.com.ar@gmail.com>
 '''
 
+
 class Invert:
     def invert(self):
         '''Invert the colors of the image'''
